@@ -25,7 +25,8 @@ Fluid :: struct {
 }
 
 create_fluid :: proc(size: int, dt, diff, visc: f32) -> Fluid {
-    return Fluid{
+  assert(size >= 3, "Fluid size must be at least 3")  
+  return Fluid{
         size  = size,
         dt    = dt,
         diff  = diff,
@@ -48,16 +49,28 @@ destroy_fluid :: proc(fluid: ^Fluid) {
     delete(fluid.vy0)
 }
 
+is_coord_valid :: proc(fluid: ^Fluid, x,y: int) -> bool {
+  if x < 0 || x >= fluid.size || y < 0 || y >= fluid.size {
+    return false
+  }
+  return true
+}
 
 add_density :: proc(fluid: ^Fluid, x, y: int, amount: f32) {
-    index := x + y * fluid.size
-    fluid.density[index] += amount
+  if is_coord_valid(fluid, x, y) == false {
+    return
+  }
+  index := x + y * fluid.size
+  fluid.density[index] += amount
 }
 
 add_velocity :: proc(fluid: ^Fluid, x, y: int, amount_x, amount_y: f32) {
-    index := x + y * fluid.size
-    fluid.vx[index] += amount_x
-    fluid.vy[index] += amount_y
+  if is_coord_valid(fluid, x, y) == false {
+    return
+  }
+  index := x + y * fluid.size
+  fluid.vx[index] += amount_x
+  fluid.vy[index] += amount_y
 }
 
 diffuse :: proc(fluid: ^Fluid, b: int, x: []f32, x0: []f32, diff: f32) {
@@ -178,6 +191,7 @@ main :: proc() {
   defer SDL.DestroyRenderer(renderer)
 
   fluid := create_fluid(GRID_SIZE, 0.1, 0, 0)
+  assert(fluid.size == GRID_SIZE, "GRID_SIZE must match fluid size")
   defer destroy_fluid(&fluid)
 
   running := true
