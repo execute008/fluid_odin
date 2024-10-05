@@ -6,9 +6,9 @@ import "core:math/rand"
 import SDL "vendor:sdl2"
 
 
-WINDOW_WIDTH  :: 800
-WINDOW_HEIGHT :: 600
-GRID_SIZE     :: 64
+WINDOW_WIDTH  :: 1920
+WINDOW_HEIGHT :: 1080
+GRID_SIZE     :: 128
 SCALE         :: WINDOW_WIDTH / GRID_SIZE
 
 Fluid :: struct {
